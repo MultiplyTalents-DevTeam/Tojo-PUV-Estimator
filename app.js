@@ -1,67 +1,33 @@
-const vehicleCatalog = {
-  puv: [
-    {
-      id: "mandaragit",
-      name: "Mandaragit PUV X",
-      description: "Modern e-jeepney for route-based public transport.",
-      basePrice: 3600000,
-    },
-    {
-      id: "limbasx",
-      name: "Limbas X",
-      description: "Public transport EV for larger deployment programs.",
-      basePrice: 3900000,
-    },
-  ],
-  etrike: [
-    {
-      id: "emotorela",
-      name: "E-Motorela",
-      description: "Electric tricycle for TODA and livelihood programs.",
-      basePrice: 520000,
-    },
-    {
-      id: "lawinx",
-      name: "Lawin X",
-      description: "Higher-capability e-trike for local mobility routes.",
-      basePrice: 680000,
-    },
-  ],
-  tourism: [
-    {
-      id: "tourister",
-      name: "Tourister",
-      description: "Quiet EV for resorts, islands, and tourism operations.",
-      basePrice: 1450000,
-    },
-    {
-      id: "maya",
-      name: "Maya E-Quad",
-      description: "Compact passenger EV for short-distance movement.",
-      basePrice: 780000,
-    },
-  ],
-  utility: [
-    {
-      id: "limbasz",
-      name: "Limbas Z",
-      description: "Utility EV for service, support, and cargo operations.",
-      basePrice: 1250000,
-    },
-    {
-      id: "maya",
-      name: "Maya E-Quad",
-      description: "Compact EV for private, campus, or business fleets.",
-      basePrice: 780000,
-    },
-  ],
+const vehicles = {
+  mandaragit: {
+    name: "Mandaragit PUV X",
+    basePrice: 3600000,
+  },
+  limbas: {
+    name: "Limbas X",
+    basePrice: 3900000,
+  },
 };
 
-const programLabels = {
-  puv: "PUV Modernization",
-  etrike: "E-Trike Program",
-  tourism: "Tourism Transport",
-  utility: "Utility / Corporate Fleet",
+const routeLabels = {
+  urban: "Urban route",
+  mixed: "Mixed city and provincial",
+  hilly: "Hilly or high-load route",
+  assessment: "Still under assessment",
+};
+
+const routeMultipliers = {
+  urban: 1,
+  mixed: 1.04,
+  hilly: 1.09,
+  assessment: 1.05,
+};
+
+const hourMultipliers = {
+  8: 1,
+  12: 1.03,
+  16: 1.07,
+  18: 1.11,
 };
 
 const batteryLabels = {
@@ -96,13 +62,23 @@ const supportCosts = {
   hauling: 30000,
 };
 
-const form = document.querySelector("#estimateForm");
-const programSelect = document.querySelector("#program");
-const vehicleOptions = document.querySelector("#vehicleOptions");
-const fleetSizeInput = document.querySelector("#fleetSize");
-const batterySelect = document.querySelector("#battery");
+const stepTitles = [
+  "Route profile",
+  "Vehicle and fleet",
+  "Battery setup",
+  "Support needs",
+  "Contact form",
+];
 
-function formatPeso(value) {
+const form = document.querySelector("#estimateForm");
+const steps = [...document.querySelectorAll(".wizard-step")];
+const prevButton = document.querySelector("#prevButton");
+const nextButton = document.querySelector("#nextButton");
+const formStatus = document.querySelector("#formStatus");
+const fleetSizeInput = document.querySelector("#fleetSize");
+let currentStep = 0;
+
+function currencyShort(value) {
   if (value >= 1000000) {
     const millions = value / 1000000;
     return `PHP ${millions.toFixed(millions >= 10 ? 0 : 1)}M`;
@@ -115,74 +91,142 @@ function formatPeso(value) {
   }).format(value);
 }
 
-function getSelectedVehicle() {
-  const selected = form.querySelector("input[name='vehicle']:checked");
-  const currentVehicles = vehicleCatalog[programSelect.value];
-  return currentVehicles.find((vehicle) => vehicle.id === selected?.value) || currentVehicles[0];
+function selectedValue(name) {
+  return new FormData(form).get(name);
 }
 
-function getSelectedSupports() {
+function selectedSupports() {
   return [...form.querySelectorAll("input[name='support']:checked")].map((input) => input.value);
-}
-
-function renderVehicles() {
-  const vehicles = vehicleCatalog[programSelect.value];
-  vehicleOptions.innerHTML = vehicles
-    .map(
-      (vehicle, index) => `
-        <label class="vehicle-option">
-          <input type="radio" name="vehicle" value="${vehicle.id}" ${index === 0 ? "checked" : ""} />
-          <strong>${vehicle.name}</strong>
-          <span>${vehicle.description}</span>
-        </label>
-      `
-    )
-    .join("");
 }
 
 function getTier(fleetSize) {
   if (fleetSize >= 25) {
     return {
-      name: "Full Deployment Package",
-      note: "A multi-unit deployment package for LGU, city, or route-wide transport operations.",
+      name: "Full Route Deployment",
+      note: "Best for route-wide or LGU-backed modernization programs with stronger operations planning.",
     };
   }
 
   if (fleetSize >= 5) {
     return {
       name: "Cooperative Fleet Package",
-      note: "A route-based deployment package with vehicle units, battery setup, and core support services.",
+      note: "Best for cooperatives and operators preparing a practical route-based rollout.",
     };
   }
 
   return {
-    name: "Starter Deployment Package",
-    note: "A compact starter estimate for pilot operations, demos, or early fleet rollout.",
+    name: "Pilot PUV Package",
+    note: "Best for initial validation, demos, or a starter deployment before scaling units.",
   };
 }
 
+function updateStepDots() {
+  document.querySelectorAll(".step-dot").forEach((dot, i) => {
+    const isDone = i < currentStep;
+    const isActive = i === currentStep;
+    dot.classList.toggle("is-done", isDone);
+    dot.classList.toggle("is-active", isActive);
+    dot.textContent = isDone ? "✓" : String(i + 1);
+  });
+  document.querySelectorAll(".step-connector").forEach((conn, i) => {
+    conn.classList.toggle("is-done", i < currentStep);
+  });
+}
+
+function updateWizard(shouldFocus = false) {
+  steps.forEach((step, index) => {
+    step.classList.toggle("is-active", index === currentStep);
+  });
+
+  document.querySelector("#stepCounter").textContent = `Step ${currentStep + 1} of ${steps.length}`;
+  document.querySelector("#stepTitle").textContent = stepTitles[currentStep];
+
+  const progressFill = document.querySelector("#progressFill");
+  const pct = ((currentStep + 1) / steps.length) * 100;
+  progressFill.style.width = `${pct}%`;
+  progressFill.closest("[role='progressbar']")?.setAttribute("aria-valuenow", currentStep + 1);
+
+  prevButton.disabled = currentStep === 0;
+  nextButton.textContent = currentStep === steps.length - 1 ? "Submit Request" : "Next";
+
+  updateStepDots();
+
+  if (shouldFocus) {
+    const heading = steps[currentStep].querySelector("h2");
+    if (heading) {
+      heading.setAttribute("tabindex", "-1");
+      heading.focus({ preventScroll: false });
+    }
+  }
+}
+
 function updateEstimate() {
-  const vehicle = getSelectedVehicle();
+  const vehicle = vehicles[selectedValue("vehicle")] || vehicles.mandaragit;
   const fleetSize = Math.max(1, Math.min(500, Number(fleetSizeInput.value) || 1));
-  const supports = getSelectedSupports();
+  const routeType = selectedValue("routeType") || "urban";
+  const operatingHours = selectedValue("operatingHours") || "12";
+  const battery = selectedValue("battery") || "charging";
+  const supports = selectedSupports();
   const supportPerUnit = supports.reduce((total, support) => total + supportCosts[support], 0);
-  const batteryMultiplier = batteryMultipliers[batterySelect.value];
-  const subtotal = vehicle.basePrice * batteryMultiplier + supportPerUnit;
-  const lower = subtotal * fleetSize * 0.94;
-  const upper = subtotal * fleetSize * 1.12;
+  const unitEstimate =
+    vehicle.basePrice *
+      routeMultipliers[routeType] *
+      hourMultipliers[operatingHours] *
+      batteryMultipliers[battery] +
+    supportPerUnit;
+  const lower = unitEstimate * fleetSize * 0.94;
+  const upper = unitEstimate * fleetSize * 1.12;
   const tier = getTier(fleetSize);
 
   fleetSizeInput.value = fleetSize;
   document.querySelector("#packageTier").textContent = tier.name;
   document.querySelector("#resultNote").textContent = tier.note;
-  document.querySelector("#priceRange").textContent = `${formatPeso(lower)} - ${formatPeso(upper)}`;
-  document.querySelector("#summaryProgram").textContent = programLabels[programSelect.value];
+  document.querySelector("#priceRange").textContent = `${currencyShort(lower)} - ${currencyShort(upper)}`;
   document.querySelector("#summaryVehicle").textContent = vehicle.name;
   document.querySelector("#summaryFleet").textContent = `${fleetSize} ${fleetSize === 1 ? "unit" : "units"}`;
-  document.querySelector("#summaryBattery").textContent = batteryLabels[batterySelect.value];
+  document.querySelector("#summaryRoute").textContent = routeLabels[routeType];
+  document.querySelector("#summaryBattery").textContent = batteryLabels[battery];
   document.querySelector("#summarySupport").textContent =
-    supports.map((support) => supportLabels[support]).join(", ") || "Basic inquiry only";
+    supports.map((support) => supportLabels[support]).join(", ") || "Basic review only";
 }
+
+function validateCurrentStep() {
+  const activeStep = steps[currentStep];
+  const requiredFields = [...activeStep.querySelectorAll("[required]")];
+  const invalidField = requiredFields.find((field) => !field.checkValidity());
+
+  if (invalidField) {
+    invalidField.reportValidity();
+    return false;
+  }
+
+  return true;
+}
+
+prevButton.addEventListener("click", () => {
+  currentStep = Math.max(0, currentStep - 1);
+  formStatus.textContent = "";
+  updateWizard(true);
+});
+
+nextButton.addEventListener("click", () => {
+  if (!validateCurrentStep()) return;
+
+  if (currentStep < steps.length - 1) {
+    currentStep += 1;
+    formStatus.textContent = "";
+    updateWizard(true);
+    return;
+  }
+
+  nextButton.disabled = true;
+  nextButton.textContent = "Sending…";
+  setTimeout(() => {
+    nextButton.disabled = false;
+    nextButton.textContent = "Submit Request";
+    formStatus.textContent = "Request captured — connect this form to your CRM or email handler for live submissions.";
+  }, 800);
+});
 
 document.querySelectorAll(".stepper-button").forEach((button) => {
   button.addEventListener("click", () => {
@@ -198,13 +242,8 @@ document.querySelectorAll(".quick-sizes button").forEach((button) => {
   });
 });
 
-programSelect.addEventListener("change", () => {
-  renderVehicles();
-  updateEstimate();
-});
-
 form.addEventListener("input", updateEstimate);
 form.addEventListener("change", updateEstimate);
 
-renderVehicles();
+updateWizard(false);
 updateEstimate();
