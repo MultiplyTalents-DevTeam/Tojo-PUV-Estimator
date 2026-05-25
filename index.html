@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tojo Motors Estimator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="tojo-estimator" id="tojoEstimator">
+      <section class="estimator-shell" aria-labelledby="estimatorTitle">
+        <div class="estimator-intro">
+          <p class="eyebrow">EV package estimator</p>
+          <h1 id="estimatorTitle">Build a Tojo Motors fleet estimate.</h1>
+          <p>
+            Select the vehicle program, fleet size, battery setup, and support package.
+            The result is a planning range for review by Tojo Motors.
+          </p>
+        </div>
+
+        <div class="estimator-grid">
+          <form class="estimate-form" id="estimateForm">
+            <div class="field-group">
+              <label for="program">Program</label>
+              <select id="program" name="program">
+                <option value="puv">PUV Modernization</option>
+                <option value="etrike">E-Trike Program</option>
+                <option value="tourism">Tourism Transport</option>
+                <option value="utility">Utility / Corporate Fleet</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label>Vehicle</label>
+              <div class="vehicle-options" id="vehicleOptions"></div>
+            </div>
+
+            <div class="field-group">
+              <label for="fleetSize">Fleet size</label>
+              <div class="stepper">
+                <button type="button" class="stepper-button" data-step="-1" aria-label="Decrease fleet size">−</button>
+                <input id="fleetSize" name="fleetSize" type="number" min="1" max="500" value="10" />
+                <button type="button" class="stepper-button" data-step="1" aria-label="Increase fleet size">+</button>
+              </div>
+              <div class="quick-sizes" aria-label="Fleet size shortcuts">
+                <button type="button" data-size="1">1</button>
+                <button type="button" data-size="5">5</button>
+                <button type="button" data-size="10">10</button>
+                <button type="button" data-size="25">25</button>
+                <button type="button" data-size="50">50+</button>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="battery">Battery setup</label>
+              <select id="battery" name="battery">
+                <option value="charging">Depot charging</option>
+                <option value="swapping">Battery swapping</option>
+                <option value="subscription">Battery subscription</option>
+                <option value="assessment">Needs Tojo assessment</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label>Support package</label>
+              <div class="support-list">
+                <label><input type="checkbox" name="support" value="maintenance" checked /> Preventive maintenance</label>
+                <label><input type="checkbox" name="support" value="parts" checked /> Parts support</label>
+                <label><input type="checkbox" name="support" value="training" checked /> Driver and maintenance training</label>
+                <label><input type="checkbox" name="support" value="operations" /> Fleet operation planning</label>
+                <label><input type="checkbox" name="support" value="gps" /> GPS / AFCS readiness</label>
+                <label><input type="checkbox" name="support" value="hauling" /> Hauling and service response</label>
+              </div>
+            </div>
+
+            <div class="field-group split">
+              <label>
+                Location
+                <input type="text" name="location" placeholder="City or province" />
+              </label>
+              <label>
+                Route type
+                <select name="route">
+                  <option>Urban route</option>
+                  <option>Mixed city and provincial</option>
+                  <option>Tourism or island route</option>
+                  <option>Heavy-load or hilly route</option>
+                </select>
+              </label>
+            </div>
+          </form>
+
+          <aside class="estimate-result" aria-labelledby="resultTitle">
+            <div class="result-topline">
+              <p class="eyebrow">Live result</p>
+              <span id="packageTier">Cooperative Fleet Package</span>
+            </div>
+            <h2 id="resultTitle">Estimated planning range</h2>
+            <div class="price-range" id="priceRange">PHP 32M - 41M</div>
+            <p class="result-note" id="resultNote">
+              A route-based deployment package with vehicle units, battery setup, and core support services.
+            </p>
+
+            <dl class="result-list">
+              <div>
+                <dt>Program</dt>
+                <dd id="summaryProgram">PUV Modernization</dd>
+              </div>
+              <div>
+                <dt>Vehicle</dt>
+                <dd id="summaryVehicle">Mandaragit PUV X</dd>
+              </div>
+              <div>
+                <dt>Fleet size</dt>
+                <dd id="summaryFleet">10 units</dd>
+              </div>
+              <div>
+                <dt>Battery</dt>
+                <dd id="summaryBattery">Depot charging</dd>
+              </div>
+              <div>
+                <dt>Support</dt>
+                <dd id="summarySupport">Maintenance, parts, training</dd>
+              </div>
+            </dl>
+
+            <div class="official-review">
+              <strong>For official quotation</strong>
+              <p>Tojo Motors should validate terrain, route load, charging space, financing, and delivery scope.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
