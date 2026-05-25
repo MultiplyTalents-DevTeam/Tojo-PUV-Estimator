@@ -1,18 +1,21 @@
 const vehicles = {
   mandaragit: {
     name: "Mandaragit PUV X",
-    basePrice: 3600000,
+    class: "Class 2",
+    basePrice: 1950000,
   },
   limbas: {
     name: "Limbas X",
-    basePrice: 3900000,
+    class: "Class 1",
+    basePrice: 1750000,
   },
 };
 
 const routeLabels = {
-  urban: "Urban route",
+  urban: "Urban (city center)",
   mixed: "Mixed city and provincial",
-  hilly: "Hilly or high-load route",
+  hilly: "Hilly or mountainous route",
+  tourist: "Tourist / island route",
   assessment: "Still under assessment",
 };
 
@@ -20,6 +23,7 @@ const routeMultipliers = {
   urban: 1,
   mixed: 1.04,
   hilly: 1.09,
+  tourist: 1.06,
   assessment: 1.05,
 };
 
@@ -31,43 +35,50 @@ const hourMultipliers = {
 };
 
 const batteryLabels = {
-  charging: "Depot charging",
-  swapping: "Battery swapping",
-  subscription: "Battery subscription",
+  charging: "Depot / overnight charging",
+  swapping: "Battery swapping (< 2 min)",
+  payswap: "Pay-per-swap subscription",
   assessment: "Needs Tojo assessment",
 };
 
+const batteryHints = {
+  charging: "Requires dedicated charging space at depot or garage.",
+  swapping: "Tojo's signature system — always-standby batteries, less than 2-minute swap.",
+  payswap: "Pay per swap, no upfront battery cost. Ideal for solo or small operators.",
+  assessment: "Tojo's team will evaluate the best setup for your route and depot conditions.",
+};
+
 const batteryMultipliers = {
-  charging: 1.08,
-  swapping: 1.16,
-  subscription: 1.04,
-  assessment: 1.1,
+  charging: 1.06,
+  swapping: 1.14,
+  payswap: 1.08,
+  assessment: 1.08,
 };
 
 const supportLabels = {
-  maintenance: "Maintenance",
-  parts: "Parts",
-  training: "Training",
-  operations: "Operations planning",
-  gps: "GPS / AFCS",
-  hauling: "Hauling",
+  maintenance: "Preventive maintenance",
+  parts: "Parts supply",
+  driver_training: "Driver training",
+  tech_training: "Technician training",
+  fleet_training: "Fleet management training",
+  gps_afcs: "GPS & AFCS",
 };
 
 const supportCosts = {
-  maintenance: 45000,
-  parts: 35000,
-  training: 25000,
-  operations: 55000,
-  gps: 40000,
-  hauling: 30000,
+  maintenance: 25000,
+  parts: 18000,
+  driver_training: 12000,
+  tech_training: 15000,
+  fleet_training: 18000,
+  gps_afcs: 25000,
 };
 
 const stepTitles = [
   "Route profile",
   "Vehicle and fleet",
   "Battery setup",
-  "Support needs",
-  "Contact form",
+  "Support and services",
+  "Request review",
 ];
 
 const form = document.querySelector("#estimateForm");
@@ -76,6 +87,7 @@ const prevButton = document.querySelector("#prevButton");
 const nextButton = document.querySelector("#nextButton");
 const formStatus = document.querySelector("#formStatus");
 const fleetSizeInput = document.querySelector("#fleetSize");
+const batteryHintEl = document.querySelector("#batteryHint");
 let currentStep = 0;
 
 function currencyShort(value) {
@@ -83,7 +95,6 @@ function currencyShort(value) {
     const millions = value / 1000000;
     return `PHP ${millions.toFixed(millions >= 10 ? 0 : 1)}M`;
   }
-
   return new Intl.NumberFormat("en-PH", {
     style: "currency",
     currency: "PHP",
@@ -96,27 +107,31 @@ function selectedValue(name) {
 }
 
 function selectedSupports() {
-  return [...form.querySelectorAll("input[name='support']:checked")].map((input) => input.value);
+  return [...form.querySelectorAll("input[name='support']:checked")].map((el) => el.value);
 }
 
 function getTier(fleetSize) {
   if (fleetSize >= 25) {
     return {
       name: "Full Route Deployment",
-      note: "Best for route-wide or LGU-backed modernization programs with stronger operations planning.",
+      note: "Best for route-wide or LGU-backed modernization programs with full operations planning.",
     };
   }
-
   if (fleetSize >= 5) {
     return {
       name: "Cooperative Fleet Package",
-      note: "Best for cooperatives and operators preparing a practical route-based rollout.",
+      note: "Best for cooperatives and TODAs preparing a practical route-based rollout.",
     };
   }
-
+  if (fleetSize >= 2) {
+    return {
+      name: "Pilot PUV Package",
+      note: "Best for initial demos or a starter deployment before scaling your fleet.",
+    };
+  }
   return {
-    name: "Pilot PUV Package",
-    note: "Best for initial validation, demos, or a starter deployment before scaling units.",
+    name: "Solo Operator Package",
+    note: "Best for individual franchise holders or solo operators deploying a single Tojo PUV unit.",
   };
 }
 
@@ -142,8 +157,7 @@ function updateWizard(shouldFocus = false) {
   document.querySelector("#stepTitle").textContent = stepTitles[currentStep];
 
   const progressFill = document.querySelector("#progressFill");
-  const pct = ((currentStep + 1) / steps.length) * 100;
-  progressFill.style.width = `${pct}%`;
+  progressFill.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
   progressFill.closest("[role='progressbar']")?.setAttribute("aria-valuenow", currentStep + 1);
 
   prevButton.disabled = currentStep === 0;
@@ -160,6 +174,13 @@ function updateWizard(shouldFocus = false) {
   }
 }
 
+function updateBatteryHint() {
+  const battery = selectedValue("battery") || "charging";
+  if (batteryHintEl) {
+    batteryHintEl.textContent = batteryHints[battery] || "";
+  }
+}
+
 function updateEstimate() {
   const vehicle = vehicles[selectedValue("vehicle")] || vehicles.mandaragit;
   const fleetSize = Math.max(1, Math.min(500, Number(fleetSizeInput.value) || 1));
@@ -167,13 +188,15 @@ function updateEstimate() {
   const operatingHours = selectedValue("operatingHours") || "12";
   const battery = selectedValue("battery") || "charging";
   const supports = selectedSupports();
-  const supportPerUnit = supports.reduce((total, support) => total + supportCosts[support], 0);
+  const supportPerUnit = supports.reduce((sum, s) => sum + (supportCosts[s] || 0), 0);
+
   const unitEstimate =
     vehicle.basePrice *
-      routeMultipliers[routeType] *
-      hourMultipliers[operatingHours] *
-      batteryMultipliers[battery] +
+    routeMultipliers[routeType] *
+    hourMultipliers[operatingHours] *
+    batteryMultipliers[battery] +
     supportPerUnit;
+
   const lower = unitEstimate * fleetSize * 0.94;
   const upper = unitEstimate * fleetSize * 1.12;
   const tier = getTier(fleetSize);
@@ -181,25 +204,26 @@ function updateEstimate() {
   fleetSizeInput.value = fleetSize;
   document.querySelector("#packageTier").textContent = tier.name;
   document.querySelector("#resultNote").textContent = tier.note;
-  document.querySelector("#priceRange").textContent = `${currencyShort(lower)} - ${currencyShort(upper)}`;
+  document.querySelector("#priceRange").textContent = `${currencyShort(lower)} – ${currencyShort(upper)}`;
   document.querySelector("#summaryVehicle").textContent = vehicle.name;
-  document.querySelector("#summaryFleet").textContent = `${fleetSize} ${fleetSize === 1 ? "unit" : "units"}`;
+  document.querySelector("#summaryFleet").textContent =
+    fleetSize === 1 ? "1 unit (solo)" : `${fleetSize} units`;
   document.querySelector("#summaryRoute").textContent = routeLabels[routeType];
   document.querySelector("#summaryBattery").textContent = batteryLabels[battery];
   document.querySelector("#summarySupport").textContent =
-    supports.map((support) => supportLabels[support]).join(", ") || "Basic review only";
+    supports.map((s) => supportLabels[s]).join(", ") || "Basic review only";
+
+  updateBatteryHint();
 }
 
 function validateCurrentStep() {
   const activeStep = steps[currentStep];
   const requiredFields = [...activeStep.querySelectorAll("[required]")];
-  const invalidField = requiredFields.find((field) => !field.checkValidity());
-
+  const invalidField = requiredFields.find((f) => !f.checkValidity());
   if (invalidField) {
     invalidField.reportValidity();
     return false;
   }
-
   return true;
 }
 
@@ -224,13 +248,13 @@ nextButton.addEventListener("click", () => {
   setTimeout(() => {
     nextButton.disabled = false;
     nextButton.textContent = "Submit Request";
-    formStatus.textContent = "Request captured — connect this form to your CRM or email handler for live submissions.";
-  }, 800);
+    formStatus.textContent = "Request received — Tojo Motors will be in touch shortly at sales@tojomotors.com or +63 917 516 0202.";
+  }, 900);
 });
 
 document.querySelectorAll(".stepper-button").forEach((button) => {
   button.addEventListener("click", () => {
-    fleetSizeInput.value = Number(fleetSizeInput.value || 1) + Number(button.dataset.step);
+    fleetSizeInput.value = Math.max(1, Number(fleetSizeInput.value || 1) + Number(button.dataset.step));
     updateEstimate();
   });
 });

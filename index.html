@@ -6,37 +6,54 @@
     <title>Tojo Motors PUV Estimator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Calistoga&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Calistoga&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <a class="skip-link" href="#estimateForm">Skip to estimator</a>
     <main class="tojo-estimator" id="tojoEstimator">
       <section class="estimator-shell" aria-labelledby="estimatorTitle">
+
+        <div class="brand-strip">
+          <span class="brand-name">Tojo Motors</span>
+          <span class="brand-tag">100% Filipino-made electric vehicles</span>
+        </div>
+
         <div class="estimator-intro">
-          <p class="eyebrow">PUV modernization estimator</p>
-          <h1 id="estimatorTitle">Plan your Tojo electric PUV package.</h1>
+          <p class="eyebrow">PUV Modernization Estimator</p>
+          <h1 id="estimatorTitle">Plan your electric PUV deployment.</h1>
           <p>
-            A guided 5-step estimator for routes, cooperatives, LGUs, and fleet
-            operators preparing an electric PUV deployment.
+            A guided 5-step planner for solo operators, cooperatives, LGUs, and
+            fleet managers preparing a Tojo electric PUV program.
           </p>
         </div>
 
         <div class="progress-area" aria-label="Estimator progress">
           <div class="step-dots" aria-hidden="true">
-            <span class="step-dot is-active" data-dot="0">1</span>
+            <span class="step-group">
+              <span class="step-dot is-active" data-dot="0">1</span>
+              <span class="step-label">Route</span>
+            </span>
             <span class="step-connector"></span>
-            <span class="step-dot" data-dot="1">2</span>
+            <span class="step-group">
+              <span class="step-dot" data-dot="1">2</span>
+              <span class="step-label">Vehicle</span>
+            </span>
             <span class="step-connector"></span>
-            <span class="step-dot" data-dot="2">3</span>
+            <span class="step-group">
+              <span class="step-dot" data-dot="2">3</span>
+              <span class="step-label">Battery</span>
+            </span>
             <span class="step-connector"></span>
-            <span class="step-dot" data-dot="3">4</span>
+            <span class="step-group">
+              <span class="step-dot" data-dot="3">4</span>
+              <span class="step-label">Support</span>
+            </span>
             <span class="step-connector"></span>
-            <span class="step-dot" data-dot="4">5</span>
-          </div>
-          <div class="progress-copy">
-            <span id="stepCounter">Step 1 of 5</span>
-            <strong id="stepTitle">Route profile</strong>
+            <span class="step-group">
+              <span class="step-dot" data-dot="4">5</span>
+              <span class="step-label">Request</span>
+            </span>
           </div>
           <div
             class="progress-track"
@@ -48,30 +65,38 @@
           >
             <div class="progress-fill" id="progressFill"></div>
           </div>
+          <div class="progress-copy">
+            <span id="stepCounter">Step 1 of 5</span>
+            <strong id="stepTitle">Route profile</strong>
+          </div>
         </div>
 
         <div class="estimator-grid">
           <form class="estimate-form" id="estimateForm">
+
+            <!-- Step 1: Route profile -->
             <section class="wizard-step is-active" data-step="0" aria-labelledby="stepOneTitle">
               <h2 id="stepOneTitle">Route profile</h2>
-              <p class="step-help">Start with how the PUVs will operate day to day.</p>
+              <p class="step-help">Tell us how the PUVs will operate day to day.</p>
 
               <div class="field-group split">
                 <label>
                   Operator type
                   <select name="operatorType" id="operatorType">
-                    <option>Transport cooperative</option>
-                    <option>LGU / city program</option>
-                    <option>Route operator</option>
-                    <option>Private fleet operator</option>
+                    <option value="solo">Solo operator / individual</option>
+                    <option value="toda">Transport cooperative (TODA)</option>
+                    <option value="lgu">LGU / city program</option>
+                    <option value="route">Route operator</option>
+                    <option value="fleet">Private fleet operator</option>
                   </select>
                 </label>
                 <label>
                   Route type
                   <select name="routeType" id="routeType">
-                    <option value="urban">Urban route</option>
+                    <option value="urban">Urban (city center)</option>
                     <option value="mixed">Mixed city and provincial</option>
-                    <option value="hilly">Hilly or high-load route</option>
+                    <option value="hilly">Hilly or mountainous route</option>
+                    <option value="tourist">Tourist / island route</option>
                     <option value="assessment">Still under assessment</option>
                   </select>
                 </label>
@@ -80,7 +105,20 @@
               <div class="field-group split">
                 <label>
                   City or province
-                  <input type="text" name="location" id="location" placeholder="Example: Naga City" />
+                  <input
+                    type="text"
+                    name="location"
+                    id="location"
+                    placeholder="e.g. Naga City, Boracay, GenSan"
+                    list="cityList"
+                  />
+                  <datalist id="cityList">
+                    <option value="Naga City" />
+                    <option value="Boracay Island" />
+                    <option value="General Santos City" />
+                    <option value="Butuan City" />
+                    <option value="Santa Rosa, Laguna" />
+                  </datalist>
                 </label>
                 <label>
                   Daily operating hours
@@ -94,22 +132,33 @@
               </div>
             </section>
 
+            <!-- Step 2: Vehicle & fleet -->
             <section class="wizard-step" data-step="1" aria-labelledby="stepTwoTitle">
               <h2 id="stepTwoTitle">Vehicle and fleet size</h2>
-              <p class="step-help">Choose the PUV family and estimated number of units.</p>
+              <p class="step-help">Both models are 18-seat, 10KW AC motor, 15KWh lithium-ion, UNECE compliant.</p>
 
               <fieldset class="field-group">
                 <legend>Vehicle model</legend>
                 <div class="vehicle-options">
                   <label class="vehicle-option">
                     <input type="radio" name="vehicle" value="mandaragit" checked />
+                    <div class="vehicle-badges">
+                      <span class="vehicle-badge class-badge">Class 2</span>
+                      <span class="vehicle-badge">18 seats</span>
+                      <span class="vehicle-badge">10KW</span>
+                    </div>
                     <strong>Mandaragit PUV X</strong>
-                    <span>Modern electric jeepney for route-based public transport.</span>
+                    <span>Curved frontal design built for steady inter-city transport. Battery swapping ready.</span>
                   </label>
                   <label class="vehicle-option">
                     <input type="radio" name="vehicle" value="limbas" />
+                    <div class="vehicle-badges">
+                      <span class="vehicle-badge class-badge">Class 1</span>
+                      <span class="vehicle-badge">18 seats</span>
+                      <span class="vehicle-badge">10KW</span>
+                    </div>
                     <strong>Limbas X</strong>
-                    <span>Electric PUV option for broader deployment planning.</span>
+                    <span>Compact and quiet for short urban routes. Battery swapping ready.</span>
                   </label>
                 </div>
               </fieldset>
@@ -117,12 +166,12 @@
               <div class="field-group">
                 <label for="fleetSize">Target fleet size</label>
                 <div class="stepper">
-                  <button type="button" class="stepper-button" data-step="-1" aria-label="Decrease fleet size">-</button>
+                  <button type="button" class="stepper-button" data-step="-1" aria-label="Decrease fleet size">−</button>
                   <input id="fleetSize" name="fleetSize" type="number" min="1" max="500" value="10" />
                   <button type="button" class="stepper-button" data-step="1" aria-label="Increase fleet size">+</button>
                 </div>
                 <div class="quick-sizes" aria-label="Fleet size shortcuts">
-                  <button type="button" data-size="1">1</button>
+                  <button type="button" data-size="1">Solo</button>
                   <button type="button" data-size="5">5</button>
                   <button type="button" data-size="10">10</button>
                   <button type="button" data-size="25">25</button>
@@ -131,54 +180,57 @@
               </div>
             </section>
 
+            <!-- Step 3: Battery -->
             <section class="wizard-step" data-step="2" aria-labelledby="stepThreeTitle">
               <h2 id="stepThreeTitle">Battery and charging setup</h2>
-              <p class="step-help">Battery planning affects uptime, infrastructure, and operating cost.</p>
+              <p class="step-help">Tojo vehicles support multiple charging configurations. Battery swapping is Tojo's signature system.</p>
 
               <div class="field-group">
                 <label for="battery">Preferred battery setup</label>
                 <select id="battery" name="battery">
-                  <option value="charging">Depot charging</option>
-                  <option value="swapping">Battery swapping</option>
-                  <option value="subscription">Battery subscription</option>
+                  <option value="charging">Depot / overnight charging</option>
+                  <option value="swapping">Battery swapping (&lt; 2 min swap)</option>
+                  <option value="payswap">Pay-per-swap subscription</option>
                   <option value="assessment">Needs Tojo assessment</option>
                 </select>
+                <p class="field-hint" id="batteryHint">Requires dedicated charging space at depot or garage.</p>
               </div>
 
               <div class="field-group split">
                 <label>
                   Charging or garage space
                   <select name="chargingSpace" id="chargingSpace">
-                    <option value="ready">Available</option>
+                    <option value="ready">Already available</option>
                     <option value="partial">Partially available</option>
                     <option value="none">Not yet available</option>
                     <option value="unknown">Not sure</option>
                   </select>
                 </label>
                 <label>
-                  Turnaround priority
+                  Route continuity need
                   <select name="turnaround" id="turnaround">
                     <option value="standard">Standard downtime is okay</option>
                     <option value="fast">Fast turnaround is important</option>
-                    <option value="continuous">Continuous route operation</option>
+                    <option value="continuous">Continuous operation required</option>
                   </select>
                 </label>
               </div>
             </section>
 
+            <!-- Step 4: Support -->
             <section class="wizard-step" data-step="3" aria-labelledby="stepFourTitle">
-              <h2 id="stepFourTitle">Support and package needs</h2>
-              <p class="step-help">Select the services that should be included in the planning range.</p>
+              <h2 id="stepFourTitle">Support and services</h2>
+              <p class="step-help">Choose from Tojo's 3S program (Sell, Support, Sustain) services to include in your estimate.</p>
 
               <fieldset class="field-group">
-                <legend>Support package</legend>
+                <legend>Services to include</legend>
                 <div class="support-list">
-                  <label><input type="checkbox" name="support" value="maintenance" checked /> Preventive maintenance</label>
-                  <label><input type="checkbox" name="support" value="parts" checked /> Parts support</label>
-                  <label><input type="checkbox" name="support" value="training" checked /> Driver and mechanic training</label>
-                  <label><input type="checkbox" name="support" value="operations" /> Fleet operation planning</label>
-                  <label><input type="checkbox" name="support" value="gps" /> GPS / AFCS readiness</label>
-                  <label><input type="checkbox" name="support" value="hauling" /> Hauling and service response</label>
+                  <label><input type="checkbox" name="support" value="maintenance" checked /> Preventive maintenance program</label>
+                  <label><input type="checkbox" name="support" value="parts" checked /> Parts supply &amp; sourcing</label>
+                  <label><input type="checkbox" name="support" value="driver_training" checked /> EV driver &amp; operations training</label>
+                  <label><input type="checkbox" name="support" value="tech_training" /> EV technician training</label>
+                  <label><input type="checkbox" name="support" value="fleet_training" /> Fleet management training</label>
+                  <label><input type="checkbox" name="support" value="gps_afcs" /> GPS &amp; AFCS integration</label>
                 </div>
               </fieldset>
 
@@ -189,24 +241,26 @@
                     <option value="soon">0 to 3 months</option>
                     <option value="quarter">3 to 6 months</option>
                     <option value="year">6 to 12 months</option>
-                    <option value="planning">Planning stage</option>
+                    <option value="planning">Planning stage only</option>
                   </select>
                 </label>
                 <label>
                   Financing status
                   <select name="financing" id="financing">
                     <option value="exploring">Still exploring</option>
+                    <option value="amortization">3-year amortization plan</option>
                     <option value="budgeted">Budget already planned</option>
+                    <option value="lgu">LGU / government funding</option>
                     <option value="loan">Needs financing discussion</option>
-                    <option value="lgu">LGU / program funding</option>
                   </select>
                 </label>
               </div>
             </section>
 
+            <!-- Step 5: Contact -->
             <section class="wizard-step" data-step="4" aria-labelledby="stepFiveTitle">
               <h2 id="stepFiveTitle">Request official review</h2>
-              <p class="step-help">Share contact details so Tojo Motors can validate your estimate.</p>
+              <p class="step-help">Share your details so Tojo Motors can validate your estimate and get in touch.</p>
 
               <div class="field-group split">
                 <label>
@@ -214,15 +268,15 @@
                   <input type="text" name="fullName" autocomplete="name" required aria-required="true" />
                 </label>
                 <label>
-                  Organization <span class="req" aria-hidden="true">*</span>
-                  <input type="text" name="organization" autocomplete="organization" required aria-required="true" />
+                  Organization / cooperative
+                  <input type="text" name="organization" autocomplete="organization" />
                 </label>
               </div>
 
               <div class="field-group split">
                 <label>
                   Mobile number <span class="req" aria-hidden="true">*</span>
-                  <input type="tel" name="phone" autocomplete="tel" required aria-required="true" />
+                  <input type="tel" name="phone" autocomplete="tel" placeholder="+63" required aria-required="true" />
                 </label>
                 <label>
                   Email address <span class="req" aria-hidden="true">*</span>
@@ -232,8 +286,15 @@
 
               <div class="field-group">
                 <label>
+                  Province or region
+                  <input type="text" name="province" autocomplete="address-level1" placeholder="e.g. Camarines Sur, Davao del Sur" />
+                </label>
+              </div>
+
+              <div class="field-group">
+                <label>
                   Notes for Tojo Motors
-                  <textarea name="notes" rows="4" placeholder="Route details, target date, unit requirements, or battery questions"></textarea>
+                  <textarea name="notes" rows="3" placeholder="Route details, franchise info, target deployment date, or battery setup questions."></textarea>
                 </label>
               </div>
             </section>
@@ -246,15 +307,16 @@
             <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
           </form>
 
+          <!-- Result panel -->
           <aside class="estimate-result" aria-labelledby="resultTitle">
             <div class="result-topline">
-              <p class="eyebrow">Live result</p>
+              <p class="eyebrow">Live estimate</p>
               <span id="packageTier">Cooperative Fleet Package</span>
             </div>
             <h2 id="resultTitle">Estimated planning range</h2>
-            <div class="price-range" id="priceRange">PHP 36M - 43M</div>
+            <div class="price-range" id="priceRange">PHP 21M – PHP 25M</div>
             <p class="result-note" id="resultNote">
-              A route-based deployment package with vehicle units, battery setup, and core support services.
+              Best for cooperatives and operators preparing a route-based rollout.
             </p>
 
             <dl class="result-list">
@@ -268,21 +330,28 @@
               </div>
               <div>
                 <dt>Route</dt>
-                <dd id="summaryRoute">Urban route</dd>
+                <dd id="summaryRoute">Urban (city center)</dd>
               </div>
               <div>
                 <dt>Battery</dt>
-                <dd id="summaryBattery">Depot charging</dd>
+                <dd id="summaryBattery">Depot / overnight charging</dd>
               </div>
               <div>
-                <dt>Support</dt>
-                <dd id="summarySupport">Maintenance, parts, training</dd>
+                <dt>Services</dt>
+                <dd id="summarySupport">Maintenance, parts, driver training</dd>
               </div>
             </dl>
 
             <div class="official-review">
               <strong>Planning estimate only</strong>
-              <p>Final pricing should be validated by Tojo Motors based on route load, terrain, charging setup, financing, delivery scope, and after-sales terms.</p>
+              <p>Final pricing is validated by Tojo Motors based on route, terrain, battery setup, financing terms, and after-sales scope.</p>
+            </div>
+
+            <div class="result-contact">
+              <p class="contact-label">Speak with Tojo Motors directly</p>
+              <a href="tel:+639175160202" class="contact-link">+63 917 516 0202</a>
+              <a href="mailto:sales@tojomotors.com" class="contact-link">sales@tojomotors.com</a>
+              <p class="contact-hours">Mon–Sat, 8:00 AM – 5:00 PM</p>
             </div>
           </aside>
         </div>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Calistoga&family=Inter:wght@400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Calistoga&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
   --tojo-forest: #123524;
@@ -22,6 +22,7 @@ body {
   background: var(--tojo-bg);
   color: var(--tojo-ink);
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 15px;
 }
 
 h1,
@@ -42,7 +43,7 @@ fieldset legend {
   margin-bottom: 10px;
   color: var(--tojo-forest);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 fieldset legend + * {
@@ -57,7 +58,7 @@ fieldset legend + * {
   background: var(--tojo-forest);
   color: white;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   text-decoration: none;
   border-radius: 0 0 8px 8px;
   z-index: 9999;
@@ -79,6 +80,31 @@ button {
   touch-action: manipulation;
 }
 
+/* ── Brand strip ──────────────────────── */
+
+.brand-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0 18px;
+  border-bottom: 1px solid var(--tojo-border);
+  margin-bottom: 24px;
+}
+
+.brand-name {
+  color: var(--tojo-forest);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.brand-tag {
+  color: var(--tojo-muted);
+  font-size: 12px;
+}
+
+/* ── Layout ───────────────────────────── */
+
 .tojo-estimator {
   width: 100%;
   padding: 24px;
@@ -88,66 +114,70 @@ button {
 .estimator-shell {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 28px;
+  padding: 28px 32px;
   background:
-    linear-gradient(135deg, rgba(239, 227, 194, 0.72), rgba(255, 255, 255, 0.9) 42%),
+    linear-gradient(135deg, rgba(239, 227, 194, 0.6), rgba(255, 255, 255, 0.92) 40%),
     var(--tojo-card);
-  border: 1px solid rgba(18, 53, 36, 0.12);
-  box-shadow: 0 24px 70px rgba(18, 53, 36, 0.12);
+  border: 1px solid rgba(18, 53, 36, 0.1);
+  box-shadow: 0 20px 60px rgba(18, 53, 36, 0.1);
 }
 
 .estimator-intro {
-  max-width: 720px;
-  margin-bottom: 24px;
+  max-width: 640px;
+  margin-bottom: 28px;
 }
 
 .eyebrow {
   margin: 0 0 8px;
   color: var(--tojo-green);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.estimator-intro h1,
-.estimate-result h2 {
-  margin: 0;
-  color: var(--tojo-forest);
-  font-weight: 700;
-  line-height: 1.06;
-}
-
 .estimator-intro h1 {
-  font-size: clamp(30px, 4vw, 46px);
+  margin: 0 0 10px;
+  color: var(--tojo-forest);
+  font-size: clamp(28px, 3.5vw, 42px);
+  line-height: 1.08;
 }
 
-.estimator-intro p,
-.step-help,
-.result-note,
-.official-review p {
+.estimator-intro p {
+  margin: 0;
   color: var(--tojo-muted);
-  line-height: 1.55;
+  font-size: 15px;
+  line-height: 1.6;
 }
+
+/* ── Progress & step dots ─────────────── */
 
 .progress-area {
-  margin: 0 0 20px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.72);
+  margin: 0 0 24px;
+  padding: 18px 20px 14px;
+  background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--tojo-border);
+  border-radius: 4px;
 }
 
 .step-dots {
   display: flex;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.step-group {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 14px;
+  gap: 5px;
+  flex-shrink: 0;
 }
 
 .step-dot {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -155,7 +185,7 @@ button {
   background: white;
   color: #b0b8a8;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 700;
   transition: background 200ms ease, border-color 200ms ease, color 200ms ease;
 }
 
@@ -171,9 +201,26 @@ button {
   color: white;
 }
 
+.step-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #b0b8a8;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.step-group:has(.step-dot.is-active) .step-label {
+  color: var(--tojo-green);
+}
+
+.step-group:has(.step-dot.is-done) .step-label {
+  color: var(--tojo-forest);
+}
+
 .step-connector {
   flex: 1;
   height: 2px;
+  margin-top: 13px;
   background: #e4e8da;
   transition: background 200ms ease;
 }
@@ -182,23 +229,12 @@ button {
   background: var(--tojo-green);
 }
 
-.progress-copy {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 10px;
-  color: var(--tojo-muted);
-  font-size: 14px;
-}
-
-.progress-copy strong {
-  color: var(--tojo-green);
-}
-
 .progress-track {
-  height: 8px;
+  height: 4px;
   overflow: hidden;
   background: #e9eedf;
+  border-radius: 2px;
+  margin-bottom: 10px;
 }
 
 .progress-fill {
@@ -206,77 +242,70 @@ button {
   height: 100%;
   background: linear-gradient(90deg, var(--tojo-green), var(--tojo-leaf));
   transition: width 220ms ease;
+  border-radius: 2px;
 }
+
+.progress-copy {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--tojo-muted);
+  font-size: 13px;
+}
+
+.progress-copy strong {
+  color: var(--tojo-forest);
+  font-weight: 600;
+}
+
+/* ── Grid ─────────────────────────────── */
 
 .estimator-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(340px, 0.75fr);
+  grid-template-columns: minmax(0, 1.3fr) minmax(300px, 0.7fr);
   gap: 20px;
   align-items: start;
 }
 
 .estimate-form,
 .estimate-result {
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--tojo-border);
+  border-radius: 2px;
 }
 
 .estimate-form {
   display: grid;
   gap: 20px;
   padding: 24px;
-  min-height: 560px;
+  min-height: 540px;
 }
 
 .estimate-result {
   position: sticky;
   top: 16px;
-  padding: 24px;
+  padding: 22px;
 }
+
+/* ── Form fields ──────────────────────── */
 
 .field-group {
   display: grid;
-  gap: 10px;
-}
-
-.wizard-step {
-  display: none;
-}
-
-.wizard-step.is-active {
-  display: grid;
-  gap: 20px;
-  animation: stepIn 200ms ease;
-}
-
-.wizard-step h2 {
-  margin: 0;
-  color: var(--tojo-forest);
-  font-size: clamp(24px, 3vw, 32px);
-  line-height: 1.12;
-}
-
-.step-help {
-  margin: -12px 0 0;
-}
-
-@keyframes stepIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  gap: 8px;
 }
 
 .field-group > label,
 .split label {
   color: var(--tojo-forest);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
+}
+
+.field-hint {
+  margin: 4px 0 0;
+  color: var(--tojo-muted);
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .req {
@@ -293,11 +322,23 @@ textarea {
   color: var(--tojo-ink);
   background: white;
   border: 1px solid #d6dccb;
-  border-radius: 8px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23123524' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 38px;
+  cursor: pointer;
 }
 
 textarea {
   resize: vertical;
+  min-height: 80px;
 }
 
 select:focus,
@@ -305,9 +346,52 @@ input:focus,
 textarea:focus,
 button:focus-visible {
   border-color: var(--tojo-green);
-  outline: 4px solid var(--tojo-ring);
+  outline: 3px solid var(--tojo-ring);
   outline-offset: 2px;
 }
+
+/* ── Wizard steps ─────────────────────── */
+
+.wizard-step {
+  display: none;
+}
+
+.wizard-step.is-active {
+  display: grid;
+  gap: 20px;
+  animation: stepIn 200ms ease;
+}
+
+.wizard-step h2 {
+  margin: 0;
+  color: var(--tojo-forest);
+  font-size: clamp(22px, 2.8vw, 30px);
+  line-height: 1.14;
+}
+
+.wizard-step h2:focus {
+  outline: none;
+}
+
+.step-help {
+  margin: -12px 0 0;
+  color: var(--tojo-muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+@keyframes stepIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.split {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* ── Vehicle options ──────────────────── */
 
 .vehicle-options {
   display: grid;
@@ -318,17 +402,19 @@ button:focus-visible {
 .vehicle-option {
   position: relative;
   display: grid;
-  min-height: 112px;
+  gap: 6px;
+  min-height: 130px;
   padding: 16px;
   border: 1px solid var(--tojo-border);
+  border-radius: 6px;
   background: white;
   cursor: pointer;
-  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+  transition: border-color 160ms ease, background-color 160ms ease;
 }
 
 .vehicle-option:hover {
-  transform: translateY(-1px);
-  border-color: rgba(62, 123, 39, 0.5);
+  border-color: rgba(62, 123, 39, 0.45);
+  background: rgba(248, 247, 241, 0.6);
 }
 
 .vehicle-option input {
@@ -337,19 +423,20 @@ button:focus-visible {
   width: 100%;
   height: 100%;
   opacity: 0;
+  cursor: pointer;
 }
 
 .vehicle-option:has(input:checked) {
   border-color: var(--tojo-green);
-  background: rgba(133, 169, 71, 0.12);
+  background: rgba(133, 169, 71, 0.1);
   box-shadow: inset 0 0 0 1px var(--tojo-green);
 }
 
 .vehicle-option:has(input:checked)::before {
   content: '';
   position: absolute;
-  top: 11px;
-  right: 11px;
+  top: 12px;
+  right: 12px;
   width: 20px;
   height: 20px;
   background: var(--tojo-green);
@@ -359,8 +446,8 @@ button:focus-visible {
 .vehicle-option:has(input:checked)::after {
   content: '';
   position: absolute;
-  top: 15px;
-  right: 18px;
+  top: 16px;
+  right: 19px;
   width: 6px;
   height: 10px;
   border: 2.5px solid white;
@@ -369,20 +456,44 @@ button:focus-visible {
   transform: rotate(45deg);
 }
 
-.vehicle-option strong {
-  color: var(--tojo-forest);
-  font-size: 17px;
+.vehicle-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
-.vehicle-option span {
-  color: var(--tojo-muted);
+.vehicle-badge {
+  display: inline-block;
+  padding: 2px 7px;
+  background: var(--tojo-cream);
+  color: var(--tojo-forest);
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 999px;
+}
+
+.class-badge {
+  background: rgba(18, 53, 36, 0.1);
+  color: var(--tojo-forest);
+}
+
+.vehicle-option strong {
+  color: var(--tojo-forest);
   font-size: 14px;
+  font-weight: 700;
+}
+
+.vehicle-option span:not(.vehicle-badge) {
+  color: var(--tojo-muted);
+  font-size: 13px;
   line-height: 1.4;
 }
 
+/* ── Stepper & quick sizes ────────────── */
+
 .stepper {
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  grid-template-columns: 46px minmax(0, 1fr) 46px;
   gap: 8px;
 }
 
@@ -393,45 +504,61 @@ button:focus-visible {
   border: 1px solid var(--tojo-border);
   border-radius: 999px;
   font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
 }
 
-.quick-sizes,
-.support-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.quick-sizes button {
-  min-height: 40px;
-  min-width: 58px;
-  color: var(--tojo-green);
-  background: white;
-  border: 1px solid var(--tojo-border);
-  border-radius: 999px;
-  font-weight: 700;
-}
-
-.quick-sizes button:hover,
 .stepper-button:hover {
   background: rgba(62, 123, 39, 0.08);
   border-color: var(--tojo-green);
 }
 
+.quick-sizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.quick-sizes button {
+  min-height: 36px;
+  min-width: 50px;
+  padding: 0 12px;
+  color: var(--tojo-green);
+  background: white;
+  border: 1px solid var(--tojo-border);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.quick-sizes button:hover {
+  background: rgba(62, 123, 39, 0.08);
+  border-color: var(--tojo-green);
+}
+
+/* ── Support list ─────────────────────── */
+
+.support-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
 .support-list label {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: 42px;
-  padding: 9px 12px;
+  gap: 7px;
+  min-height: 40px;
+  padding: 8px 12px;
   color: var(--tojo-forest);
   background: white;
   border: 1px solid var(--tojo-border);
   border-radius: 999px;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition: background-color 140ms ease, border-color 140ms ease;
 }
 
 .support-list label:has(input:checked) {
@@ -440,27 +567,24 @@ button:focus-visible {
 }
 
 .support-list input {
-  width: 18px;
-  min-height: 18px;
+  width: 16px;
+  min-height: 16px;
   accent-color: var(--tojo-green);
 }
 
-.split {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
+/* ── Actions ──────────────────────────── */
 
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 46px;
-  padding: 11px 22px;
+  padding: 11px 24px;
   border: 1px solid transparent;
   border-radius: 999px;
-  font-weight: 800;
-  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
 }
 
 .button.primary {
@@ -479,12 +603,12 @@ button:focus-visible {
 }
 
 .button.secondary:hover {
-  background: rgba(62, 123, 39, 0.08);
+  background: rgba(62, 123, 39, 0.07);
 }
 
 .button[disabled] {
   cursor: not-allowed;
-  opacity: 0.46;
+  opacity: 0.45;
 }
 
 .wizard-actions {
@@ -497,80 +621,144 @@ button:focus-visible {
 }
 
 .form-status {
-  min-height: 22px;
+  min-height: 20px;
   margin: 0;
   color: var(--tojo-green);
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
 }
+
+/* ── Result panel ─────────────────────── */
 
 .result-topline {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  margin-bottom: 12px;
 }
 
 .result-topline span {
-  padding: 8px 12px;
+  padding: 5px 10px;
   color: var(--tojo-forest);
   background: var(--tojo-cream);
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 3px;
   white-space: nowrap;
 }
 
 .estimate-result h2 {
-  margin-top: 14px;
-  font-size: 28px;
+  margin: 0 0 4px;
+  color: var(--tojo-forest);
+  font-size: 20px;
+  line-height: 1.2;
 }
 
 .price-range {
-  margin: 14px 0 8px;
+  margin: 0 0 8px;
   color: var(--tojo-green);
-  font-size: clamp(30px, 4vw, 42px);
-  font-weight: 800;
-  line-height: 1.05;
+  font-size: clamp(26px, 3.5vw, 38px);
+  font-weight: 700;
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
   font-family: "Inter", sans-serif;
 }
 
+.result-note {
+  margin: 0 0 18px;
+  color: var(--tojo-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .result-list {
-  margin: 22px 0;
+  margin: 0 0 16px;
+  border-top: 1px solid var(--tojo-border);
 }
 
 .result-list div {
   display: grid;
   grid-template-columns: 0.8fr 1.2fr;
-  gap: 12px;
-  padding: 13px 0;
-  border-top: 1px solid var(--tojo-border);
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--tojo-border);
 }
 
 .result-list dt {
   color: var(--tojo-muted);
-  font-size: 13px;
+  font-size: 12px;
+  padding-top: 1px;
 }
 
 .result-list dd {
   margin: 0;
   color: var(--tojo-forest);
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .official-review {
-  padding: 16px;
+  padding: 14px;
   background: #fbf7ec;
-  border: 1px solid rgba(18, 53, 36, 0.1);
+  border: 1px solid rgba(18, 53, 36, 0.08);
+  border-radius: 4px;
+  margin-bottom: 16px;
 }
 
 .official-review strong {
   color: var(--tojo-forest);
+  font-size: 13px;
 }
 
 .official-review p {
-  margin: 6px 0 0;
-  font-size: 14px;
+  margin: 5px 0 0;
+  color: var(--tojo-muted);
+  font-size: 13px;
+  line-height: 1.5;
 }
+
+/* ── Result contact ───────────────────── */
+
+.result-contact {
+  padding: 14px;
+  background: rgba(18, 53, 36, 0.04);
+  border: 1px solid var(--tojo-border);
+  border-radius: 4px;
+}
+
+.contact-label {
+  margin: 0 0 8px;
+  color: var(--tojo-forest);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.contact-link {
+  display: block;
+  color: var(--tojo-green);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 4px;
+  transition: color 140ms ease;
+}
+
+.contact-link:hover {
+  color: var(--tojo-forest);
+  text-decoration: underline;
+}
+
+.contact-hours {
+  margin: 8px 0 0;
+  color: var(--tojo-muted);
+  font-size: 12px;
+}
+
+/* ── Responsive ───────────────────────── */
 
 @media (max-width: 900px) {
   .estimator-grid {
@@ -582,40 +770,50 @@ button:focus-visible {
   }
 }
 
-.wizard-step h2:focus {
-  outline: none;
-}
-
-@media (max-width: 620px) {
+@media (max-width: 680px) {
   .tojo-estimator {
     padding: 12px;
   }
 
-  .estimator-shell,
+  .estimator-shell {
+    padding: 16px 18px;
+  }
+
   .estimate-form,
   .estimate-result {
     padding: 16px;
   }
 
-  .vehicle-options,
+  .vehicle-options {
+    grid-template-columns: 1fr;
+  }
+
   .split {
     grid-template-columns: 1fr;
   }
 
   .result-topline {
-    align-items: flex-start;
     flex-direction: column;
+    align-items: flex-start;
   }
 
   .result-list div {
     grid-template-columns: 1fr;
-    gap: 3px;
+    gap: 2px;
+  }
+
+  .step-label {
+    font-size: 9px;
   }
 
   .step-dot {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     font-size: 11px;
+  }
+
+  .step-connector {
+    margin-top: 11px;
   }
 }
 
