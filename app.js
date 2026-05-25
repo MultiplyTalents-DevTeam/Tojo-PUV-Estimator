@@ -271,3 +271,16 @@ form.addEventListener("change", updateEstimate);
 
 updateWizard(false);
 updateEstimate();
+
+// ── iframe auto-resize for GHL embed ──
+function reportHeight() {
+  if (window.parent === window) return;
+  const h = Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight
+  );
+  window.parent.postMessage({ type: "tojo-resize", height: h }, "*");
+}
+
+window.addEventListener("load", reportHeight);
+new ResizeObserver(reportHeight).observe(document.body);
